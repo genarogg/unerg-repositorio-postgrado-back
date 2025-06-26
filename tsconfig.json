@@ -31,7 +31,7 @@
     "src/**/*.tsx",
     "src/**/*.jsx",
     "csv/csvReader.js",
-    "prisma/changeProvider.js",
+    "prisma/changeProvider.js", "src/seed/index.ts",
   ],
   "exclude": [
     "node_modules",

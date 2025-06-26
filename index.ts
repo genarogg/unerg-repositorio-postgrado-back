@@ -149,6 +149,7 @@ server.register(lineasDeInvestigacionRoutes, { prefix: '/lineas-de-investigacion
 
 
 import tack from "./src/tasks"
+import seed from "./src/seed";
 
 const start = async () => {
 
@@ -168,6 +169,7 @@ const start = async () => {
 
     /* ejecutar tareas programadas */
     tack()
+    // seed()
 
     table.push(
       ['Servidor', colors.green(`http://localhost:${PORT}`)],

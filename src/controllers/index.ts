@@ -26,7 +26,6 @@ import getTrabajoById from "./trabajos/getTrabajoById";
 // search
 import search from "./filters/search"
 
-
 // Export all controllers
 export {
     // Auth Controllers
@@ -55,5 +54,5 @@ export {
 
     // search
     search,
-    
+
 }
