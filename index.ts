@@ -114,23 +114,6 @@ server.register(fastifyMetrics, {
 import dbConection from "./src/config/db-conection";
 let dbStatus: any;
 
-
-// Registrar @fastify/express
-import fastifyExpress from '@fastify/express';
-import express from 'express';
-
-import { ApolloServer } from "@apollo/server";
-
-import { expressMiddleware } from "@apollo/server/express4";
-import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
-
-import bodyParser from "body-parser";
-import { processRequest } from "graphql-upload-minimal";
-
-
-
-
-
 import fastifyView from '@fastify/view';
 import ejs from 'ejs';
 
@@ -155,8 +138,10 @@ server.register(fastifyStatic, {
 
 
 // routers
-import { healthcheck } from "./src/routers"
+import { healthcheck, authRoutes } from "./src/routers"
+
 server.register(healthcheck, { prefix: '/' })
+server.register(authRoutes, { prefix: '/auth' })
 
 
 import tack from "./src/tasks"
