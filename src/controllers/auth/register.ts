@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { encriptarContrasena, generarToken, successResponse, errorResponse, crearBitacora, prisma } from '../../functions';
 
-
 import { Role } from '@prisma/client';
 
 interface RegisterRequest {
@@ -9,18 +8,20 @@ interface RegisterRequest {
     lastName: string;
     email: string;
     password: string;
+    cedula: string;
+    estado?: boolean;
     role?: Role;
 }
 
 const registerPost = async (request: FastifyRequest<{ Body: RegisterRequest }>, reply: FastifyReply) => {
     try {
-        const { name, lastName, email, password, role } = request.body;
+        const { name, lastName, email, password, cedula, estado, role } = request.body;
 
         // Validación de entrada
-        if (!name || !lastName || !email || !password) {
+        if (!name || !lastName || !email || !password || !cedula) {
             return reply.status(400).send(
                 errorResponse({
-                    message: "Todos los campos (name, lastName, email, password) son requeridos"
+                    message: "Todos los campos (name, lastName, email, password, cedula) son requeridos"
                 })
             );
         }
@@ -44,6 +45,9 @@ const registerPost = async (request: FastifyRequest<{ Body: RegisterRequest }>, 
         // Asignar rol por defecto si no viene
         const userRole = role ?? Role.EDITOR;
 
+        // Asignar estado por defecto si no viene
+        const userEstado = typeof estado === 'boolean' ? estado : true;
+
         // Crear usuario
         const usuario = await prisma.usuario.create({
             data: {
@@ -51,6 +55,8 @@ const registerPost = async (request: FastifyRequest<{ Body: RegisterRequest }>, 
                 lastName,
                 email: email.toLowerCase(),
                 password: hashedPassword,
+                cedula,
+                estado: userEstado,
                 role: userRole
             }
         });

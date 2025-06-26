@@ -9,13 +9,16 @@ datasource db {
 }
 
 model Usuario {
-  id       Int        @id @default(autoincrement())
-  name     String
-  lastName String
-  email    String     @unique
-  password String
-  role     Role
-  Bitacora Bitacora[]
+  id                    Int                     @id @default(autoincrement())
+  name                  String
+  lastName              String
+  email                 String                  @unique
+  password              String
+  role                  Role
+  cedula                String
+  estado                Boolean
+  Bitacora              Bitacora[]
+  LineasDeInvestigacion LineasDeInvestigacion[]
 }
 
 model Bitacora {
@@ -29,7 +32,49 @@ model Bitacora {
   mensaje   String?
 }
 
+model LineasDeInvestigacion {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  estado    Boolean
+  usuarioId Int
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  Trabajos  Trabajo[]
+
+  Estadistica Estadistica[]
+}
+
+model Trabajo {
+  id                     Int                   @id @default(autoincrement())
+  titulo                 String
+  autor                  String
+  lineaDeInvestigacionId Int
+  lineaDeInvestigacion   LineasDeInvestigacion @relation(fields: [lineaDeInvestigacionId], references: [id])
+  estado                 Estado
+  doc                    String
+  periodoAcademicoId     Int
+  periodoAcademico       PeriodoAcademico      @relation(fields: [periodoAcademicoId], references: [id])
+}
+
+model PeriodoAcademico {
+  id       Int       @id @default(autoincrement())
+  periodo  String
+  Trabajos Trabajo[]
+}
+
+model Estadistica {
+  id                     Int                   @id @default(autoincrement())
+  lineaDeInvestigacionId Int
+  lineaDeInvestigacion   LineasDeInvestigacion @relation(fields: [lineaDeInvestigacionId], references: [id])
+  cantidadTrabajos       Int
+  porcentaje             Float
+}
+
 enum Role {
   SUPER
   EDITOR
+}
+
+enum Estado {
+  pendiente
+  validado
 }
