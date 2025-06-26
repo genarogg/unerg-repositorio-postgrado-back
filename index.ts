@@ -126,47 +126,9 @@ import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin
 
 import bodyParser from "body-parser";
 import { processRequest } from "graphql-upload-minimal";
-import { schema, resolvers } from "./src/graphql"
 
-server.register(fastifyExpress).after(async () => {
-  const app = express();
 
-  const apolloServer = new ApolloServer({
-    typeDefs: schema,
-    resolvers,
-    introspection: true,
-    csrfPrevention: false,
-    plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
-  });
 
-  await apolloServer.start();
-
-  app.use(
-    "/graphql",
-    // Middleware para procesar peticiones multipart (subida de archivos)
-    async (req, res, next) => {
-      if (
-        req.method === "POST" &&
-        req.headers["content-type"] &&
-        req.headers["content-type"].includes("multipart/form-data")
-      ) {
-        try {
-          req.body = await processRequest(req, res);
-        } catch (error) {
-          return next(error);
-        }
-      }
-      next();
-    },
-    // Este parser se usará para peticiones JSON (no multipart)
-    bodyParser.json(),
-
-    expressMiddleware(apolloServer)
-  );
-
-  server.use(app);
-
-});
 
 
 import fastifyView from '@fastify/view';
