@@ -24,7 +24,7 @@ import getAllTrabajos from "./trabajos/getAllTrabajos";
 import getTrabajoById from "./trabajos/getTrabajoById";
 
 // search
-import search from "./search"
+import search from "./filters/search"
 
 
 // Export all controllers
@@ -54,5 +54,6 @@ export {
     getTrabajoById,
 
     // search
-    search
+    search,
+    
 }
