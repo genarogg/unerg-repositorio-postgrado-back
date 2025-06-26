@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: solicitudes_app
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/usr/src/app
+      - solicitudes_app_data:/usr/src/app/data
+    environment:
+      - NODE_ENV=development
+    command: >
+      sh -c "npm run dev"
+
+volumes:
+  solicitudes_app_data:
