@@ -8,7 +8,7 @@ import {
 const lineasDeInvestigacionRoutes = (router: FastifyInstance) => {
   router.post('/create', createLinea);
   router.put('/update', updateLinea);
-  router.post('/get-all', getAllLineas);
+  router.get('/get-all', getAllLineas);
 
 };
 

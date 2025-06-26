@@ -125,6 +125,9 @@ server.register(fastifyView, {
   viewExt: 'ejs',
 });
 
+import fastifyMultipart from '@fastify/multipart';
+// ...existing code...
+server.register(fastifyMultipart);
 
 // servir archivos estáticos
 import fastifyStatic from '@fastify/static';

@@ -9,6 +9,8 @@ import prisma from "./prisma";
 
 import crearBitacora from "./crearBitacora";
 
+import uploadFileLocal from "./uploadFileLocal";
+
 export {
     log,
     path,
@@ -22,5 +24,6 @@ export {
     errorResponse,
     warningResponse,
     prisma,
-    crearBitacora
+    crearBitacora,
+    uploadFileLocal
 };

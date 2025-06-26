@@ -17,6 +17,15 @@ import createPeriodoAcademico from "./periodo-academico/create";
 import updatePeriodoAcademico from "./periodo-academico/update";
 import getAllPeriodosAcademicos from "./periodo-academico/getAll";
 
+// trabajos
+import createTrabajo from "./trabajos/create";
+import updateTrabajo from "./trabajos/update";
+import getAllTrabajos from "./trabajos/getAllTrabajos";
+import getTrabajoById from "./trabajos/getTrabajoById";
+
+// search
+import search from "./search"
+
 
 // Export all controllers
 export {
@@ -36,5 +45,14 @@ export {
     // periodos academicos
     createPeriodoAcademico,
     updatePeriodoAcademico,
-    getAllPeriodosAcademicos
+    getAllPeriodosAcademicos,
+
+    // trabajos
+    createTrabajo,
+    updateTrabajo,
+    getAllTrabajos,
+    getTrabajoById,
+
+    // search
+    search
 }
