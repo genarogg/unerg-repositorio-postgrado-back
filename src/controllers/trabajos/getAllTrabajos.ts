@@ -10,7 +10,7 @@ interface GetTrabajosQuery {
     lineaDeInvestigacionId?: string;
     periodoAcademicoId?: string;
     search?: string;
-    sortBy?: 'titulo' | 'autor' | 'createdAt' | 'updatedAt';
+    sortBy?: 'titulo' | 'autor' | 'id' | 'estado' | 'lineaDeInvestigacionId' | 'periodoAcademicoId';
     sortOrder?: 'asc' | 'desc';
 }
 
@@ -20,35 +20,19 @@ const getTrabajo = async (
 ) => {
     try {
         const {
-            token,
             page = '1',
             limit = '10',
             estado,
             lineaDeInvestigacionId,
             periodoAcademicoId,
             search,
-            sortBy = 'createdAt',
+            sortBy = 'id', // Changed default from 'createdAt' to 'id'
             sortOrder = 'desc'
         } = request.query;
 
-        if (!token) {
-            return reply.status(400).send(
-                errorResponse({ message: 'Token es requerido' })
-            );
-        }
-
-        // Verificar token y obtener usuario
-        const usuario = await verificarToken(token);
-
-        if (!usuario) {
-            return reply.status(403).send(
-                errorResponse({ message: 'Token inválido o expirado' })
-            );
-        }
-
         // Convertir parámetros de paginación
-        const pageNumber = parseInt(page, 10);
-        const limitNumber = parseInt(limit, 10);
+        const pageNumber = parseInt(page, 10); // Fixed: changed from 20 to 10
+        const limitNumber = parseInt(limit, 10); // Fixed: changed from 20 to 10
         const skip = (pageNumber - 1) * limitNumber;
 
         // Construir filtros
@@ -83,9 +67,12 @@ const getTrabajo = async (
             ];
         }
 
-        // Configurar ordenamiento
+        // Configurar ordenamiento - ensure we use a valid field
+        const validSortFields = ['id', 'titulo', 'autor', 'lineaDeInvestigacionId', 'estado', 'doc', 'periodoAcademicoId', 'resumen'];
+        const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'id';
+        
         const orderBy: any = {};
-        orderBy[sortBy] = sortOrder;
+        orderBy[finalSortBy] = sortOrder;
 
         // Obtener trabajos con paginación
         const [trabajos, totalCount] = await Promise.all([

@@ -40,6 +40,7 @@ CREATE TABLE "Trabajo" (
     "estado" TEXT NOT NULL,
     "doc" TEXT NOT NULL,
     "periodoAcademicoId" INTEGER NOT NULL,
+    "resumen" TEXT NOT NULL,
     CONSTRAINT "Trabajo_lineaDeInvestigacionId_fkey" FOREIGN KEY ("lineaDeInvestigacionId") REFERENCES "LineasDeInvestigacion" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Trabajo_periodoAcademicoId_fkey" FOREIGN KEY ("periodoAcademicoId") REFERENCES "PeriodoAcademico" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );

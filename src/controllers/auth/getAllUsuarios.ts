@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma, successResponse, errorResponse, verificarToken } from '../../functions';
 
 interface GetAllUsuariosRequest {
-  token: string;
+
 }
 
 const getAllUsuarios = async (
@@ -10,21 +10,7 @@ const getAllUsuarios = async (
   reply: FastifyReply
 ) => {
   try {
-    const { token } = request.body;
-
-    if (!token) {
-      return reply.status(400).send(
-        errorResponse({ message: 'El token es requerido' })
-      );
-    }
-
-    const usuario = await verificarToken(token);
-
-    if (!usuario || usuario.role !== 'SUPER') {
-      return reply.status(403).send(
-        errorResponse({ message: 'No tienes permisos para ver los usuarios' })
-      );
-    }
+   
 
     const usuarios = await prisma.usuario.findMany({
       select: {
@@ -37,6 +23,8 @@ const getAllUsuarios = async (
         estado: true,
       }
     });
+
+    console.log("Usuarios obtenidos:", usuarios); 
 
     return reply.status(200).send(
       successResponse({

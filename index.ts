@@ -70,11 +70,11 @@ import compress from '@fastify/compress';
 server.register(compress, { global: true });
 
 // Configurar caching
-import fastifyCaching from '@fastify/caching';
-server.register(fastifyCaching, {
-  privacy: fastifyCaching.privacy.PUBLIC,
-  expiresIn: 3600
-});
+// import fastifyCaching from '@fastify/caching';
+// server.register(fastifyCaching, {
+//   privacy: fastifyCaching.privacy.PUBLIC,
+//   expiresIn: 3600
+// });
 
 // Configurar Swagger
 import fastifySwagger from '@fastify/swagger';
@@ -141,11 +141,12 @@ server.register(fastifyStatic, {
 
 
 // routers
-import { healthcheck, authRoutes, lineasDeInvestigacionRoutes } from "./src/routers"
+import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter } from "./src/routers"
 
 server.register(healthcheck, { prefix: '/' })
 server.register(authRoutes, { prefix: '/auth' })
 server.register(lineasDeInvestigacionRoutes, { prefix: '/lineas-de-investigacion' })
+server.register(trabajosRouter, { prefix: '/trabajos' })
 
 
 import tack from "./src/tasks"

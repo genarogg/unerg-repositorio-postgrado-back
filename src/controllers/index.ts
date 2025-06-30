@@ -6,6 +6,8 @@ import validarSesion from "./auth/validarSesion";
 import sendEmailRecovery from "./auth/sendEmailRecovery";
 import resetPasswordWithToken from "./auth/resetPasswordWithToken";
 import getAllUsuarios from "./auth/getAllUsuarios";
+import changePassword from "./auth/changePassword";
+import updateUser from "./auth/updateUser";
 
 // Linea de Investigación Controllers
 import createLinea from "./linea-de-investigacion/create";
@@ -35,6 +37,8 @@ export {
     sendEmailRecovery,
     resetPasswordWithToken,
     getAllUsuarios,
+    changePassword,
+    updateUser,
 
     // Linea de Investigación Controllers
     createLinea,

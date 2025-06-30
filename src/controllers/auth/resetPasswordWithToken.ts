@@ -4,6 +4,7 @@ import { prisma, verificarToken, successResponse, errorResponse, crearBitacora, 
 interface ResetPasswordWithTokenRequest {
     token: string;
     nuevaContrasena: string;
+    id?: number;
 }
 
 const resetPasswordWithToken = async (

@@ -17,6 +17,8 @@ const registerPost = async (request: FastifyRequest<{ Body: RegisterRequest }>, 
     try {
         const { name, lastName, email, password, cedula, estado, role } = request.body;
 
+        console.log("Datos de registro:", { name, lastName, email, cedula, estado, role }); 
+
         // Validación de entrada
         if (!name || !lastName || !email || !password || !cedula) {
             return reply.status(400).send(

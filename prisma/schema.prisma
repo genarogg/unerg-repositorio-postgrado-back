@@ -53,6 +53,7 @@ model Trabajo {
   doc                    String
   periodoAcademicoId     Int
   periodoAcademico       PeriodoAcademico      @relation(fields: [periodoAcademicoId], references: [id])
+  resumen                String
 }
 
 model PeriodoAcademico {

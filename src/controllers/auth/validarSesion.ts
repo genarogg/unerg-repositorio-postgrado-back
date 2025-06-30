@@ -12,6 +12,8 @@ const validarSesion = async (
     try {
         const { token } = request.body;
 
+        console.log("Token recibido:", token);  
+
         if (!token) {
             return reply.status(400).send(
                 errorResponse({ message: 'El token es requerido' })
