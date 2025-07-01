@@ -28,6 +28,9 @@ import getTrabajoById from "./trabajos/getTrabajoById";
 // search
 import search from "./filters/search";
 
+// import estadisticas 
+import obtenerEstadisticas from "./estadisticas/get-all";
+
 
 // Export all controllers
 export {
@@ -59,5 +62,7 @@ export {
 
     // search
     search,
+
+    obtenerEstadisticas
 
 }

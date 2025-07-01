@@ -150,7 +150,7 @@ server.addContentTypeParser('application/json', { parseAs: 'string', bodyLimit: 
 // Manejo de errores específico para archivos grandes
 server.setErrorHandler((error, request, reply) => {
   console.error('Error del servidor:', error);
-  
+
   if (error.code === 'FST_REQ_FILE_TOO_LARGE' || error.code === 'LIMIT_FILE_SIZE') {
     reply.status(413).send({
       type: 'error',
@@ -185,16 +185,18 @@ server.register(fastifyStatic, {
 });
 
 // routers
-import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter, periodoAcademicoRoutes } from "./src/routers"
+import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter, periodoAcademicoRoutes, estadisticasRoutes } from "./src/routers"
 
 server.register(healthcheck, { prefix: '/' })
 server.register(authRoutes, { prefix: '/auth' })
 server.register(lineasDeInvestigacionRoutes, { prefix: '/lineas-de-investigacion' })
 server.register(trabajosRouter, { prefix: '/trabajos' })
 server.register(periodoAcademicoRoutes, { prefix: "/periodo" })
+server.register(estadisticasRoutes, { prefix: '/estadisticas' })
 
 import tack from "./src/tasks"
 import seed from "./src/seed";
+import { generarEstadisticas } from "./src/controllers/estadisticas/generar";
 
 const start = async () => {
 
@@ -214,7 +216,8 @@ const start = async () => {
 
     /* ejecutar tareas programadas */
     tack()
-    seed()
+    // seed()
+    generarEstadisticas()
 
     table.push(
       ['Servidor', colors.green(`http://localhost:${PORT}`)],
