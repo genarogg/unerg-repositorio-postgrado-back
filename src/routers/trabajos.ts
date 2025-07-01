@@ -8,7 +8,7 @@ import {
 
 const trabajosRouter = (router: FastifyInstance) => {
     router.post('/create', createTrabajo);
-    router.put('/update', updateTrabajo);
+    router.post('/update', updateTrabajo);
     router.get('/get-all', getAllTrabajos);
     router.get('/get-by-id/:id', getTrabajoById);
 

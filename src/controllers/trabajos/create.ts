@@ -20,6 +20,8 @@ const createTrabajo = async (
     try {
         const { token, titulo, autor, lineaDeInvestigacionId, doc, periodoAcademicoId, estado } = request.body;
 
+        console.log({ token, titulo, autor, lineaDeInvestigacionId, periodoAcademicoId, estado });
+
         if (!token || !titulo || !autor || !lineaDeInvestigacionId || !doc || !periodoAcademicoId) {
             return reply.status(400).send(
                 errorResponse({ message: 'Todos los campos son requeridos' })
@@ -50,6 +52,8 @@ const createTrabajo = async (
             );
         }
 
+        console.log('Subiendo archivo PDF...');
+
         // Subir el archivo PDF al servidor y obtener la referencia
         const docPath = await uploadFileLocal(doc, 'trabajos'); // Guardar en carpeta 'trabajos'
 
@@ -61,7 +65,8 @@ const createTrabajo = async (
                 lineaDeInvestigacionId,
                 doc: docPath, // Guardar la referencia al archivo
                 periodoAcademicoId,
-                estado: estado ?? 'pendiente'
+                estado: estado ?? 'pendiente',
+                resumen: '' // O puedes obtenerlo de request.body si lo tienes disponible
             }
         });
 
