@@ -1,6 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { PrismaClient } from '@prisma/client';
 
+import generatePDF from '../../functions/generatePDF';
+
 // Inicializa Prisma (ajusta según tu configuración)
 const prisma = new PrismaClient();
 
@@ -25,11 +27,11 @@ const generarReporte = async (req: FastifyRequest, res: FastifyReply) => {
       where: {
         lineaDeInvestigacionId: { in: lineasInvestigacion }
       },
-      _count: { 
-        id: true 
+      _count: {
+        id: true
       },
-      orderBy: { 
-        lineaDeInvestigacionId: 'asc' 
+      orderBy: {
+        lineaDeInvestigacionId: 'asc'
       }
     });
 
@@ -39,11 +41,11 @@ const generarReporte = async (req: FastifyRequest, res: FastifyReply) => {
       where: {
         periodoAcademicoId: { in: periodosAcademicos }
       },
-      _count: { 
-        id: true 
+      _count: {
+        id: true
       },
-      orderBy: { 
-        periodoAcademicoId: 'asc' 
+      orderBy: {
+        periodoAcademicoId: 'asc'
       }
     });
 
@@ -54,8 +56,8 @@ const generarReporte = async (req: FastifyRequest, res: FastifyReply) => {
         lineaDeInvestigacionId: { in: lineasInvestigacion },
         periodoAcademicoId: { in: periodosAcademicos }
       },
-      _count: { 
-        id: true 
+      _count: {
+        id: true
       },
       orderBy: [
         { lineaDeInvestigacionId: 'asc' },
@@ -131,15 +133,18 @@ const generarReporte = async (req: FastifyRequest, res: FastifyReply) => {
       configuracion: configuracion
     };
 
-    
 
-    console.log("Reporte generado:", JSON.stringify(reporte, null, 2));
 
+
+    const pdf = await generatePDF({ template: 'ReporteGlobal', data: reporte });
+
+  
     // Respuesta según el formato solicitado
     if (configuracion.formato === 'JSON') {
       return res.status(200).send({
         success: true,
-        data: reporte
+        data: pdf,
+        message: "Reporte generado exitosamente en formato JSON"
       });
     } else {
       // Aquí podrías agregar otros formatos como CSV, Excel, etc.
