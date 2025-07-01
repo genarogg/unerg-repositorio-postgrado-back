@@ -15,9 +15,9 @@ import updateLinea from "./linea-de-investigacion/update";
 import getAllLineas from "./linea-de-investigacion/getAll";
 
 // periodos academicos
-import createPeriodoAcademico from "./periodo-academico/create";
-import updatePeriodoAcademico from "./periodo-academico/update";
-import getAllPeriodosAcademicos from "./periodo-academico/getAll";
+import createPeriodoAcademico from "./periodos/create";
+import updatePeriodoAcademico from "./periodos/update";
+import getAllPeriodosAcademicos from "./periodos/getAll";
 
 // trabajos
 import createTrabajo from "./trabajos/create";
@@ -26,7 +26,8 @@ import getAllTrabajos from "./trabajos/getAllTrabajos";
 import getTrabajoById from "./trabajos/getTrabajoById";
 
 // search
-import search from "./filters/search"
+import search from "./filters/search";
+
 
 // Export all controllers
 export {

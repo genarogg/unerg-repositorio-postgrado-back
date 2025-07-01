@@ -141,12 +141,13 @@ server.register(fastifyStatic, {
 
 
 // routers
-import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter } from "./src/routers"
+import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter, periodoAcademicoRoutes } from "./src/routers"
 
 server.register(healthcheck, { prefix: '/' })
 server.register(authRoutes, { prefix: '/auth' })
 server.register(lineasDeInvestigacionRoutes, { prefix: '/lineas-de-investigacion' })
 server.register(trabajosRouter, { prefix: '/trabajos' })
+server.register(periodoAcademicoRoutes, { prefix: "/periodo" })
 
 
 import tack from "./src/tasks"

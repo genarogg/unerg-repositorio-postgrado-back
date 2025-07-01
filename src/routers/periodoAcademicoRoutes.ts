@@ -7,7 +7,7 @@ import {
 
 const periodoAcademicoRoutes = (router: FastifyInstance) => {
   router.post('/create', createPeriodoAcademico);
-  router.put('/update', updatePeriodoAcademico);
+  router.post('/update', updatePeriodoAcademico);
   router.get('/get-all', getAllPeriodosAcademicos);
 
 };
