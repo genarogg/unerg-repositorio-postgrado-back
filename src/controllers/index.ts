@@ -31,6 +31,9 @@ import search from "./filters/search";
 // import estadisticas 
 import obtenerEstadisticas from "./estadisticas/get-all";
 
+//import generar reporte
+import generarReporte from "./reportes/generar"
+
 
 // Export all controllers
 export {
@@ -63,6 +66,7 @@ export {
     // search
     search,
 
-    obtenerEstadisticas
+    obtenerEstadisticas,
+    generarReporte
 
 }

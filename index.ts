@@ -185,7 +185,7 @@ server.register(fastifyStatic, {
 });
 
 // routers
-import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter, periodoAcademicoRoutes, estadisticasRoutes,searchRoutes } from "./src/routers"
+import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter, periodoAcademicoRoutes, estadisticasRoutes, searchRoutes, generarReporteRouter } from "./src/routers"
 
 server.register(healthcheck, { prefix: '/' })
 server.register(authRoutes, { prefix: '/auth' })
@@ -194,6 +194,8 @@ server.register(searchRoutes, { prefix: '/search' })
 server.register(trabajosRouter, { prefix: '/trabajos' })
 server.register(periodoAcademicoRoutes, { prefix: "/periodo" })
 server.register(estadisticasRoutes, { prefix: '/estadisticas' })
+server.register(generarReporteRouter, { prefix: '/reporte' })
+
 
 
 import tack from "./src/tasks"
