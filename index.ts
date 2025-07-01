@@ -16,7 +16,12 @@ const __dirname = dirname(__filename);
 import 'dotenv/config';
 const { PORT } = process.env;
 
-const server: FastifyInstance = Fastify({})
+// Configurar límites amplios para base64
+const server: FastifyInstance = Fastify({
+  bodyLimit: 100 * 1024 * 1024, // 100MB para manejar archivos base64
+  requestTimeout: 120000, // 2 minutos de timeout
+  keepAliveTimeout: 10000
+})
 
 // Configura y registra @fastify/cors
 import cors from '@fastify/cors';
@@ -36,10 +41,10 @@ server.register(helmet, {
   hidePoweredBy: true,
 });
 
-// Configura  @fastify/rate-limit
+// Configura  @fastify/rate-limit con límites más flexibles para archivos
 import rateLimit from '@fastify/rate-limit';
 server.register(rateLimit, {
-  max: 100,
+  max: 50, // Reducir número de requests pero permitir archivos grandes
   timeWindow: '1 minute',
   errorResponseBuilder: (req, context) => {
     return {
@@ -53,28 +58,21 @@ server.register(rateLimit, {
 import underPressure from '@fastify/under-pressure';
 
 server.register(underPressure, {
-  maxEventLoopDelay: 1500,
+  maxEventLoopDelay: 3000, // Más tiempo para procesar archivos grandes
   message: 'Under pressure!',
   retryAfter: 50
 });
 
-// Configurar slow down
+// Configurar slow down con menos restricciones
 import slowDown from 'fastify-slow-down';
 server.register(slowDown, {
-  delayAfter: 50,
-  delay: 500
+  delayAfter: 20, // Permitir más requests antes del delay
+  delay: 200 // Menor delay
 });
 
 // Configurar compresión
 import compress from '@fastify/compress';
 server.register(compress, { global: true });
-
-// Configurar caching
-// import fastifyCaching from '@fastify/caching';
-// server.register(fastifyCaching, {
-//   privacy: fastifyCaching.privacy.PUBLIC,
-//   expiresIn: 3600
-// });
 
 // Configurar Swagger
 import fastifySwagger from '@fastify/swagger';
@@ -125,9 +123,56 @@ server.register(fastifyView, {
   viewExt: 'ejs',
 });
 
+// Configurar multipart con límites para base64
 import fastifyMultipart from '@fastify/multipart';
-// ...existing code...
-server.register(fastifyMultipart);
+server.register(fastifyMultipart, {
+  limits: {
+    fieldNameSize: 500,     // Más espacio para nombres de campo
+    fieldSize: 100 * 1024 * 1024, // 100MB para campos con base64
+    fields: 20,             // Más campos permitidos
+    fileSize: 100 * 1024 * 1024, // 100MB por archivo
+    files: 10,              // Más archivos permitidos
+    headerPairs: 5000       // Más headers permitidos
+  }
+});
+
+// Agregar manejo específico para JSON con base64
+server.addContentTypeParser('application/json', { parseAs: 'string', bodyLimit: 100 * 1024 * 1024 }, function (req, body, done) {
+  try {
+    const json = JSON.parse(body as string);
+    done(null, json);
+  } catch (err: any) {
+    err.statusCode = 400;
+    done(err, undefined);
+  }
+});
+
+// Manejo de errores específico para archivos grandes
+server.setErrorHandler((error, request, reply) => {
+  console.error('Error del servidor:', error);
+  
+  if (error.code === 'FST_REQ_FILE_TOO_LARGE' || error.code === 'LIMIT_FILE_SIZE') {
+    reply.status(413).send({
+      type: 'error',
+      message: 'El archivo es demasiado grande. Tamaño máximo permitido: 75MB (antes de codificación base64)'
+    });
+  } else if (error.code === 'FST_ERR_CTP_BODY_TOO_LARGE') {
+    reply.status(413).send({
+      type: 'error',
+      message: 'El contenido del request es demasiado grande. Reduce el tamaño del archivo.'
+    });
+  } else if (error.statusCode === 413) {
+    reply.status(413).send({
+      type: 'error',
+      message: 'Payload demasiado grande. El archivo excede el límite permitido.'
+    });
+  } else {
+    reply.status(error.statusCode || 500).send({
+      type: 'error',
+      message: error.message || 'Error interno del servidor'
+    });
+  }
+});
 
 // servir archivos estáticos
 import fastifyStatic from '@fastify/static';
@@ -139,7 +184,6 @@ server.register(fastifyStatic, {
   etag: true
 });
 
-
 // routers
 import { healthcheck, authRoutes, lineasDeInvestigacionRoutes, trabajosRouter, periodoAcademicoRoutes } from "./src/routers"
 
@@ -148,7 +192,6 @@ server.register(authRoutes, { prefix: '/auth' })
 server.register(lineasDeInvestigacionRoutes, { prefix: '/lineas-de-investigacion' })
 server.register(trabajosRouter, { prefix: '/trabajos' })
 server.register(periodoAcademicoRoutes, { prefix: "/periodo" })
-
 
 import tack from "./src/tasks"
 import seed from "./src/seed";
@@ -171,7 +214,7 @@ const start = async () => {
 
     /* ejecutar tareas programadas */
     tack()
-    // seed()
+    seed()
 
     table.push(
       ['Servidor', colors.green(`http://localhost:${PORT}`)],

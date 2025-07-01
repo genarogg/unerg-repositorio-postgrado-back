@@ -14,6 +14,8 @@ const getAllLineas = async (
             }
         });
 
+        console.log("Líneas de investigación obtenidas:", lineas);
+
         return reply.status(200).send(
             successResponse({
                 message: 'Líneas de investigación obtenidas exitosamente',

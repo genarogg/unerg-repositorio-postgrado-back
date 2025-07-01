@@ -76,6 +76,7 @@ enum Role {
 }
 
 enum Estado {
-  pendiente
-  validado
+  PENDIENTE
+  VALIDADO
+  RECHAZADO
 }

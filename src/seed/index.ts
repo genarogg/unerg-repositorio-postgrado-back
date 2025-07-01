@@ -93,8 +93,7 @@ async function seed() {
     // 2. Crear períodos académicos
     const periodos = [];
     const periodosData = [
-      '2020-1', '2020-2', '2021-1', '2021-2', '2022-1',
-      '2022-2', '2023-1', '2023-2', '2024-1', '2024-2'
+       '2023-2', '2024-1', '2024-2'
     ];
 
     for (const periodo of periodosData) {
@@ -221,7 +220,7 @@ async function seed() {
           autor: autorAleatorio,
           resumen,
           lineaDeInvestigacionId: lineaAleatoria.id,
-          estado: Math.random() > 0.3 ? 'validado' as const : 'pendiente' as const, // 70% validados
+          estado: Math.random() > 0.3 ? 'VALIDADO' as const : 'PENDIENTE' as const, // 70% validados
           doc: `documento_${i + 1}.pdf`,
           periodoAcademicoId: periodoAleatorio.id
         }

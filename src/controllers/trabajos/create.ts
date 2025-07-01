@@ -11,6 +11,8 @@ interface CreateTrabajoRequest {
     doc: any; // Archivo PDF que se subirá
     periodoAcademicoId: number;
     estado?: Estado;
+    pdfBase64: string; // Si se envía el PDF como base64
+    resumen?: string; // Resumen opcional
 }
 
 const createTrabajo = async (
@@ -18,11 +20,13 @@ const createTrabajo = async (
     reply: FastifyReply
 ) => {
     try {
-        const { token, titulo, autor, lineaDeInvestigacionId, doc, periodoAcademicoId, estado } = request.body;
+        const { token, titulo, autor, lineaDeInvestigacionId, doc, periodoAcademicoId, estado, resumen, pdfBase64 } = request.body;
 
-        console.log({ token, titulo, autor, lineaDeInvestigacionId, periodoAcademicoId, estado });
 
-        if (!token || !titulo || !autor || !lineaDeInvestigacionId || !doc || !periodoAcademicoId) {
+
+        console.log({ token, titulo, autor, lineaDeInvestigacionId, periodoAcademicoId, estado,resumen, pdfBase64 });
+
+        if (!token || !titulo || !autor || !lineaDeInvestigacionId || !doc || !periodoAcademicoId || !pdfBase64) {
             return reply.status(400).send(
                 errorResponse({ message: 'Todos los campos son requeridos' })
             );
@@ -52,10 +56,13 @@ const createTrabajo = async (
             );
         }
 
-        console.log('Subiendo archivo PDF...');
+
 
         // Subir el archivo PDF al servidor y obtener la referencia
-        const docPath = await uploadFileLocal(doc, 'trabajos'); // Guardar en carpeta 'trabajos'
+        const docPath = await uploadFileLocal({ pdfBase64 }); // Guardar en carpeta 'trabajos'
+
+        console.log(`Archivo subido exitosamente: ${docPath}`);
+
 
         // Crear el trabajo con la referencia al archivo
         const nuevoTrabajo = await prisma.trabajo.create({
@@ -65,8 +72,8 @@ const createTrabajo = async (
                 lineaDeInvestigacionId,
                 doc: docPath, // Guardar la referencia al archivo
                 periodoAcademicoId,
-                estado: estado ?? 'pendiente',
-                resumen: '' // O puedes obtenerlo de request.body si lo tienes disponible
+                estado: estado ?? 'PENDIENTE', // Por defecto, el estado es PENDIENTE
+                resumen: resumen ? resumen.trim() : ""
             }
         });
 
