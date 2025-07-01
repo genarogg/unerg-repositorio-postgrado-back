@@ -32,11 +32,11 @@ async function seed() {
       {
         name: 'Juan Carlos',
         lastName: 'Rodríguez García',
-        email: 'juan.rodriguez@universidad.edu',
+        email: 'editor@admin.com',
         cedula: '12345678',
         role: 'SUPER' as const,
         estado: true,
-        password: 'password123'
+        password: 'editor'
       },
       {
         name: 'María Elena',
