@@ -1,18 +1,16 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { prisma, verificarToken, successResponse, errorResponse } from '../../functions';
+import { prisma, successResponse, errorResponse } from '../../functions';
 import { Estado } from '@prisma/client';
 
 interface SearchTrabajosQuery {
-    token: string;
     q?: string; 
+    query?: string;  // Parámetro adicional para compatibilidad
     titulo?: string; 
     autor?: string; 
     periodo?: string; 
     lineaInvestigacion?: string; 
     estado?: Estado; 
-    page?: string;
-    limit?: string;
-    sortBy?: 'titulo' | 'autor' | 'createdAt' | 'updatedAt';
+    sortBy?: 'titulo' | 'autor' | 'id';
     sortOrder?: 'asc' | 'desc';
 }
 
@@ -22,79 +20,63 @@ const searchTrabajos = async (
 ) => {
     try {
         const {
-            token,
             q,
+            query,
             titulo,
             autor,
             periodo,
             lineaInvestigacion,
             estado,
-            page = '1',
-            limit = '10',
-            sortBy = 'createdAt',
+            sortBy = 'id',
             sortOrder = 'desc'
         } = request.query;
 
-        if (!token) {
-            return reply.status(400).send(
-                errorResponse({ message: 'Token es requerido' })
-            );
-        }
+        // Usar 'q' si está presente, sino usar 'query' como fallback
+        const searchTerm = q || query;
 
         // Verificar que al menos un parámetro de búsqueda esté presente
-        if (!q && !titulo && !autor && !periodo && !lineaInvestigacion && !estado) {
+        if (!searchTerm && !titulo && !autor && !periodo && !lineaInvestigacion && !estado) {
             return reply.status(400).send(
                 errorResponse({ message: 'Se requiere al menos un parámetro de búsqueda' })
             );
         }
 
-        // Verificar token y obtener usuario
-        const usuario = await verificarToken(token);
-
-        if (!usuario) {
-            return reply.status(403).send(
-                errorResponse({ message: 'Token inválido o expirado' })
-            );
-        }
-
-        // Convertir parámetros de paginación
-        const pageNumber = parseInt(page, 10);
-        const limitNumber = parseInt(limit, 10);
-        const skip = (pageNumber - 1) * limitNumber;
+        // Validar sortBy
+        const validSortFields = ['titulo', 'autor', 'id'];
+        const validSortBy = validSortFields.includes(sortBy) ? sortBy : 'id';
+        
+        // Validar sortOrder
+        const validSortOrder = sortOrder === 'asc' ? 'asc' : 'desc';
 
         // Construir filtros de búsqueda
         const where: any = {
             AND: []
         };
 
-        // Búsqueda general (q) - busca en título, autor, línea y periodo
-        if (q) {
+        // Búsqueda general (searchTerm) - busca en título, autor, línea y periodo
+        if (searchTerm) {
             where.OR = [
                 {
                     titulo: {
-                        contains: q,
-                        mode: 'insensitive'
+                        contains: searchTerm
                     }
                 },
                 {
                     autor: {
-                        contains: q,
-                        mode: 'insensitive'
+                        contains: searchTerm
                     }
                 },
                 {
                     lineaDeInvestigacion: {
                         nombre: {
-                            contains: q,
-                            mode: 'insensitive'
+                            contains: searchTerm
                         }
                     }
                 },
                 {
                     periodoAcademico: {
                         periodo: {
-                            contains: q,
-                            mode: 'insensitive'
+                            contains: searchTerm
                         }
                     }
                 }
@@ -105,8 +87,7 @@ const searchTrabajos = async (
         if (titulo) {
             where.AND.push({
                 titulo: {
-                    contains: titulo,
-                    mode: 'insensitive'
+                    contains: titulo
                 }
             });
         }
@@ -114,8 +95,7 @@ const searchTrabajos = async (
         if (autor) {
             where.AND.push({
                 autor: {
-                    contains: autor,
-                    mode: 'insensitive'
+                    contains: autor
                 }
             });
         }
@@ -124,8 +104,7 @@ const searchTrabajos = async (
             where.AND.push({
                 periodoAcademico: {
                     periodo: {
-                        contains: periodo,
-                        mode: 'insensitive'
+                        contains: periodo
                     }
                 }
             });
@@ -135,8 +114,7 @@ const searchTrabajos = async (
             where.AND.push({
                 lineaDeInvestigacion: {
                     nombre: {
-                        contains: lineaInvestigacion,
-                        mode: 'insensitive'
+                        contains: lineaInvestigacion
                     }
                 }
             });
@@ -155,9 +133,9 @@ const searchTrabajos = async (
 
         // Configurar ordenamiento
         const orderBy: any = {};
-        orderBy[sortBy] = sortOrder;
+        orderBy[validSortBy] = validSortOrder;
 
-        // Ejecutar búsqueda con paginación
+        // Ejecutar búsqueda
         const [trabajos, totalCount] = await Promise.all([
             prisma.trabajo.findMany({
                 where,
@@ -176,30 +154,14 @@ const searchTrabajos = async (
                         }
                     }
                 },
-                orderBy,
-                skip,
-                take: limitNumber
+                orderBy
             }),
             prisma.trabajo.count({ where })
         ]);
 
-        // Calcular información de paginación
-        const totalPages = Math.ceil(totalCount / limitNumber);
-        const hasNextPage = pageNumber < totalPages;
-        const hasPrevPage = pageNumber > 1;
-
-        const paginationInfo = {
-            currentPage: pageNumber,
-            totalPages,
-            totalCount,
-            hasNextPage,
-            hasPrevPage,
-            limit: limitNumber
-        };
-
         // Información de la búsqueda realizada
         const searchInfo = {
-            searchTerm: q,
+            searchTerm: searchTerm,
             filters: {
                 titulo,
                 autor,
@@ -207,7 +169,9 @@ const searchTrabajos = async (
                 lineaInvestigacion,
                 estado
             },
-            resultsFound: totalCount
+            resultsFound: totalCount,
+            sortBy: validSortBy,
+            sortOrder: validSortOrder
         };
 
         return reply.status(200).send(
@@ -215,15 +179,18 @@ const searchTrabajos = async (
                 message: `Se encontraron ${totalCount} trabajo(s) que coinciden con la búsqueda`,
                 data: {
                     trabajos,
-                    pagination: paginationInfo,
                     search: searchInfo
                 }
             })
         );
 
     } catch (error: any) {
+        console.error('Error en searchTrabajos:', error);
         return reply.status(500).send(
-            errorResponse({ message: error.message || 'Error al realizar la búsqueda' })
+            errorResponse({ 
+                message: error.message || 'Error interno del servidor al realizar la búsqueda',
+                error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            })
         );
     }
 };
