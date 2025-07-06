@@ -219,9 +219,9 @@ const start = async () => {
     });
 
     /* ejecutar tareas programadas */
-    tack()
+    // tack()
     // seed()
-    generarEstadisticas()
+    // generarEstadisticas()
 
     table.push(
       ['Servidor', colors.green(`http://localhost:${PORT}`)],

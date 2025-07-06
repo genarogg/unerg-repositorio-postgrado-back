@@ -93,7 +93,7 @@ async function seed() {
     // 2. Crear períodos académicos
     const periodos = [];
     const periodosData = [
-       '2023-2', '2024-1', '2024-2'
+      '2023-2', '2024-1', '2024-2'
     ];
 
     for (const periodo of periodosData) {
@@ -105,19 +105,18 @@ async function seed() {
 
     console.log('📅 10 períodos académicos creados');
 
+
     // 3. Crear líneas de investigación
     const lineasInvestigacion = [];
     const lineasData = [
-      'Inteligencia Artificial y Machine Learning',
-      'Desarrollo de Software y Metodologías Ágiles',
-      'Ciberseguridad y Protección de Datos',
-      'Internet de las Cosas (IoT)',
-      'Análisis de Datos y Big Data',
-      'Realidad Virtual y Aumentada',
-      'Computación en la Nube',
-      'Blockchain y Criptomonedas',
-      'Robótica y Automatización',
-      'Sistemas Distribuidos y Microservicios'
+      'Cultura, Identidad e Independencia',
+      'Bienestar, Ambiente y Sostenibilidad',
+      'Estado, Sociedad y Desarrollo',
+      'Geopolítica y Glocalización',
+      "Gestión Sólida, Efectiva y Transparente",
+      "Tecnología e Innovación",
+      "educación para la participación y protección social",
+      "educación para el desarrollo humano sustentable"
     ];
 
     for (let i = 0; i < lineasData.length; i++) {
@@ -160,9 +159,9 @@ async function seed() {
 
     const resumenesGenericos = [
       'Esta investigación aborda los desafíos contemporáneos en el campo de la tecnología, presentando soluciones innovadoras basadas en metodologías científicas rigurosas. El estudio incluye análisis comparativos, implementación de prototipos y evaluación de resultados en entornos controlados.\n\nLos hallazgos obtenidos demuestran mejoras significativas en términos de eficiencia, rendimiento y usabilidad comparado con enfoques tradicionales. La metodología aplicada combina técnicas cuantitativas y cualitativas para garantizar la validez de los resultados.\n\nLas conclusiones del trabajo proporcionan contribuciones valiosas al campo de estudio y establecen bases para futuras investigaciones, con potencial de aplicación en diversos sectores industriales y académicos.',
-      
+
       'El presente trabajo desarrolla una propuesta integral para abordar problemáticas específicas del área tecnológica, utilizando enfoques multidisciplinarios que integran teoría y práctica. Se realizaron experimentos controlados y análisis estadísticos para validar las hipótesis planteadas.\n\nLos resultados experimentales muestran mejoras cuantificables en los parámetros evaluados, con reducciones significativas en costos operativos y tiempos de procesamiento. La solución propuesta demuestra escalabilidad y adaptabilidad a diferentes contextos de aplicación.\n\nEl impacto de esta investigación se extiende más allá del ámbito académico, ofreciendo soluciones prácticas que pueden ser implementadas en entornos reales para resolver problemas contemporáneos de manera eficiente.',
-      
+
       'La investigación presenta un análisis exhaustivo de tecnologías emergentes y su aplicación en contextos específicos, evaluando su viabilidad técnica y económica. Se implementaron soluciones prototipo que fueron sometidas a pruebas rigurosas de rendimiento y funcionalidad.\n\nLos experimentos realizados confirman la efectividad de las técnicas propuestas, mostrando mejoras sustanciales en métricas clave de desempeño. El estudio incluye comparaciones con métodos existentes y análisis de casos de uso representativos.\n\nLas implicaciones de este trabajo trascienden el dominio técnico, proporcionando insights valiosos para la toma de decisiones estratégicas y el desarrollo de políticas tecnológicas en organizaciones modernas.'
     ];
 
@@ -201,9 +200,9 @@ async function seed() {
       const lineaAleatoria = lineasInvestigacion[Math.floor(Math.random() * lineasInvestigacion.length)];
       const periodoAleatorio = periodos[Math.floor(Math.random() * periodos.length)];
       const autorAleatorio = autores[Math.floor(Math.random() * autores.length)];
-      
+
       let titulo, resumen;
-      
+
       // Usar trabajos específicos para los primeros 5, luego generar automáticamente
       if (i < trabajosData.length) {
         titulo = trabajosData[i].titulo;
@@ -213,7 +212,7 @@ async function seed() {
         titulo = `${tituloBase} - Caso de estudio ${i + 1}`;
         resumen = resumenesGenericos[Math.floor(Math.random() * resumenesGenericos.length)];
       }
-      
+
       const trabajo = await prisma.trabajo.create({
         data: {
           titulo,
@@ -249,12 +248,12 @@ async function seed() {
 
     // 6. Crear entradas de bitácora
     const acciones = [
-      'LOGIN', 'LOGOUT', 'CREAR_TRABAJO', 'VALIDAR_TRABAJO', 
+      'LOGIN', 'LOGOUT', 'CREAR_TRABAJO', 'VALIDAR_TRABAJO',
       'CREAR_LINEA', 'MODIFICAR_LINEA', 'GENERAR_REPORTE'
     ];
 
     const ips = [
-      '192.168.1.100', '192.168.1.101', '10.0.0.50', 
+      '192.168.1.100', '192.168.1.101', '10.0.0.50',
       '172.16.0.25', '192.168.0.200'
     ];
 
@@ -262,7 +261,7 @@ async function seed() {
       const usuarioAleatorio = usuarios[Math.floor(Math.random() * usuarios.length)];
       const accionAleatoria = acciones[Math.floor(Math.random() * acciones.length)];
       const ipAleatoria = ips[Math.floor(Math.random() * ips.length)];
-      
+
       // Fecha aleatoria en los últimos 30 días
       const fechaAleatoria = new Date();
       fechaAleatoria.setDate(fechaAleatoria.getDate() - Math.floor(Math.random() * 30));
