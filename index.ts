@@ -177,7 +177,7 @@ server.setErrorHandler((error, request, reply) => {
 // servir archivos estáticos
 import fastifyStatic from '@fastify/static';
 server.register(fastifyStatic, {
-  root: path.join(__dirname, "..", "public"),
+  root: path.join(__dirname, "public"),
   prefix: '/',
   cacheControl: true,
   maxAge: 86400000,
